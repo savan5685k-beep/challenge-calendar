@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#090d16" />
+  <title>Challenge Calendar</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="style-base.css" />
+  <link rel="stylesheet" href="style-cal.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="app-header">
+      <div class="brand">
+        <img src="icon.svg" alt="Logo" class="brand-logo" />
+        <div>
+          <div class="brand-title">Challenge Calendar</div>
+          <div class="brand-sub">Smart Day Counter</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn-icon" id="themeBtn" aria-label="Theme"></button>
+        <button class="btn-new" id="openModalBtn">
+          <svg class="svg-icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          <span>New</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="tabs-bar" id="tabsBar"></div>
+
+    <section class="hero-card">
+      <div class="hero-main">
+        <div class="hero-info">
+          <div class="badge-row">
+            <span class="mode-tag" id="modeBadge">Flexible</span>
+            <span class="day-status-tag" id="dayStatusText">Day 1 of 100</span>
+          </div>
+          <div class="hero-title" id="heroTitle">100 Days Challenge</div>
+          <div class="timeline-pill">
+            <svg class="svg-icon" style="width:14px;height:14px" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            <span id="dateRangeText">-- to --</span>
+          </div>
+        </div>
+
+        <div class="ring-wrap">
+          <svg class="ring-svg" viewBox="0 0 86 86">
+            <circle class="ring-bg" cx="43" cy="43" r="36"></circle>
+            <circle class="ring-progress" id="ringCircle" cx="43" cy="43" r="36"></circle>
+          </svg>
+          <div class="ring-center">
+            <span class="ring-num" id="ringCounter">0/100</span>
+            <span class="ring-lbl">Done</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-item">
+          <div class="stat-icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+          </div>
+          <div>
+            <div class="stat-val" id="statDone">0</div>
+            <div class="stat-lbl">Completed</div>
+          </div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+          </div>
+          <div>
+            <div class="stat-val" id="statLeft">100</div>
+            <div class="stat-lbl">Remaining</div>
+          </div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-icon warn">
+            <svg class="svg-icon" viewBox="0 0 24 24"><path d="M12 2c.5 3.5 3.5 5.5 3.5 9a5.5 5.5 0 1 1-11 0c0-2.5 1.5-4.5 2.5-6 1 2 2.5 2.5 2.5 2.5S11 4.5 12 2z"/></svg>
+          </div>
+          <div>
+            <div class="stat-val" id="statStreak">0d</div>
+            <div class="stat-lbl">Streak</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-complete" id="completeTodayBtn"></button>
+    </section>
+
+    <section class="cal-card">
+      <div class="cal-top">
+        <div class="cal-title" id="monthLabel">Month</div>
+        <div class="cal-controls">
+          <button class="cal-btn" id="prevBtn"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <button class="cal-btn" id="todayBtn">Today</button>
+          <button class="cal-btn" id="nextBtn"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+        </div>
+      </div>
+      <div class="weekdays"><div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div></div>
+      <div class="cal-grid" id="calGrid"></div>
+      <div class="cal-footer">
+        <button class="foot-btn" id="jumpStartBtn">Start Date</button>
+        <button class="foot-btn" id="jumpEndBtn">Finish Date</button>
+        <button class="foot-btn danger" id="deleteBtn">Reset / Delete</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-sheet">
+      <div class="sheet-hdr">
+        <span class="sheet-title">New Challenge</span>
+        <button class="btn-icon" id="closeModalBtn" style="width:32px;height:32px"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="field">
+        <label>Challenge Title</label>
+        <input type="text" id="inName" class="input" placeholder="e.g. 100 Days Study Challenge" maxlength="32" />
+      </div>
+      <div class="field">
+        <label>Duration (Quick Select or Custom)</label>
+        <div class="presets" id="presetRow">
+          <button type="button" class="preset" data-d="15">15d</button>
+          <button type="button" class="preset" data-d="30">30d</button>
+          <button type="button" class="preset" data-d="75">75d</button>
+          <button type="button" class="preset active" data-d="100">100d</button>
+          <button type="button" class="preset" data-d="150">150d</button>
+        </div>
+        <input type="number" id="inDays" class="input" value="100" min="1" max="1000" />
+      </div>
+      <div class="field">
+        <label>Start Date</label>
+        <input type="date" id="inStart" class="input" />
+      </div>
+      <div class="field">
+        <label>Rule Mode</label>
+        <select id="inMode" class="input">
+          <option value="flexible">Flexible (Count every completed day)</option>
+          <option value="strict">Strict (Highlight missed streak)</option>
+        </select>
+      </div>
+      <div class="preview-box" id="previewBox"></div>
+      <button class="btn-complete" id="createBtn">Start Challenge</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Saved</div>
+  <script src="app-core.js"></script>
+  <script src="app-ui.js"></script>
+</body>
+</html>

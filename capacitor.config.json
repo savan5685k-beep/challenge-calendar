@@ -1,0 +1,7 @@
+{
+  "appId": "com.shavan.challengecalendar",
+  "appName": "Challenge Calendar",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": { "androidScheme": "https" }
+}

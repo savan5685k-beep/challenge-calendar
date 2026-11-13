@@ -1,0 +1,52 @@
+name: Build Challenge Calendar APK
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Install & Add Android
+        run: |
+          npm install
+          npx cap add android
+
+      - name: Generate Calibrated Android Icons
+        run: |
+          sudo apt-get update && sudo apt-get install -y librsvg2-bin
+          RES="android/app/src/main/res"
+          for pair in "mdpi:48:108" "hdpi:72:162" "xhdpi:96:216" "xxhdpi:144:324" "xxxhdpi:192:432"; do
+            IFS=":" read -r dir sz fg <<< "$pair"
+            rsvg-convert -w $sz -h $sz www/icon.svg -o "$RES/mipmap-$dir/ic_launcher.png"
+            rsvg-convert -w $sz -h $sz www/icon.svg -o "$RES/mipmap-$dir/ic_launcher_round.png"
+            rsvg-convert -w $fg -h $fg www/icon-fg.svg -o "$RES/mipmap-$dir/ic_launcher_foreground.png"
+          done
+          cat << 'XML' > "$RES/values/ic_launcher_background.xml"
+          <?xml version="1.0" encoding="utf-8"?>
+          <resources>
+              <color name="ic_launcher_background">#090D16</color>
+          </resources>
+          XML
+
+      - name: Assemble APK
+        run: |
+          npx cap sync android
+          chmod +x android/gradlew
+          cd android && ./gradlew assembleDebug
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Challenge-Calendar-Pro-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
