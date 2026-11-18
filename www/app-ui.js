@@ -93,7 +93,7 @@ document.getElementById('createBtn').onclick = () => {
 document.getElementById('exportBtn').onclick = () => {
   const payload = { app: 'Challenge Calendar', version: 2, exportedAt: new Date().toISOString(), data: state };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' }), url = URL.createObjectURL(blob), a = document.createElement('a');
-  a.href = url; a.download = 'challenge-calendar-backup.json'; a.click(); URL.revokeObjectURL(url); toast('Backup exported');
+  a.href = url; a.download = 'challenge-calendar-backup.json'; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); toast('Backup exported');
 };
 document.getElementById('importInput').onchange = async e => {
   const file = e.target.files && e.target.files[0]; if (!file) return;
