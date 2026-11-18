@@ -2,6 +2,8 @@ name: Build Challenge Calendar APK
 
 on:
   push:
+    branches: [ "main", "master", "audit-improvements-v3" ]
+  pull_request:
     branches: [ "main", "master" ]
   workflow_dispatch:
 
@@ -13,6 +15,24 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+      - name: Validate JavaScript syntax and HTML IDs
+        run: |
+          node --check www/app-core.js
+          node --check www/app-ui.js
+          node - <<'NODE'
+          const fs = require('fs');
+          const html = fs.readFileSync('www/index.html', 'utf8');
+          const js = fs.readFileSync('www/app-core.js', 'utf8') + fs.readFileSync('www/app-ui.js', 'utf8');
+          const ids = [...html.matchAll(/\bid=["']([^"']+)["']/g)].map(m => m[1]);
+          const duplicates = ids.filter((id, i) => ids.indexOf(id) !== i);
+          const refs = [...js.matchAll(/getElementById\(['"]([^'"]+)['"]\)/g)].map(m => m[1]);
+          const missing = [...new Set(refs.filter(id => !ids.includes(id)))];
+          if (duplicates.length || missing.length) {
+            console.error({ duplicates, missing });
+            process.exit(1);
+          }
+          console.log('HTML ID check passed');
+          NODE
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
