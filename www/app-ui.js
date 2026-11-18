@@ -110,3 +110,5 @@ document.getElementById('importInput').onchange = async e => {
   e.target.value = '';
 };
 loadState(); renderAll();
+
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && toYMD(new Date()) !== todayYMD) location.reload(); });
