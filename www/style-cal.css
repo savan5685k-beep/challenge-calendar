@@ -98,3 +98,12 @@
   font-size: 0.82rem; font-weight: 800; transition: transform 0.25s ease; z-index: 200;
 }
 .toast.show { transform: translateX(-50%) translateY(0); }
+
+/* Audit improvements: touch accessibility, disabled state, and footer layout */
+.cell:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+.cell:not(:disabled):focus-visible, button:focus-visible, .foot-btn:focus-visible {
+  outline: 2px solid var(--warn); outline-offset: 2px;
+}
+.cal-footer { flex-wrap: wrap; }
+.cal-footer .foot-btn { min-width: 72px; }
+.import-btn { cursor: pointer; }
